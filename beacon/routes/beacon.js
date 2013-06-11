@@ -105,7 +105,7 @@ exports.beacon = function(req, res){
 		
 		
 		// Connect to StatsD (hostname, port number) and send timing data 
-		c = new StatsD('ec2-54-216-112-163.eu-west-1.compute.amazonaws.com',8125);
+		c = new StatsD('127.0.0.1',8125);
  
         //c.timing(root+'.'+tld+'.'+subdomain+'.pages.'+pageType+'.TTFB', responseTime);
         //c.timing(root+'.'+tld+'.'+subdomain+'.pages.'+pageType+'.Render', pageReady);
