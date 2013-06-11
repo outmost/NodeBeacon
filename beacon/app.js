@@ -8,6 +8,8 @@ var express = require('express')
   , beacon = require('./routes/beacon')
   , user = require('./routes/user')
   , http = require('http')
+  , cluster = require('cluster')
+  , numCPUs = require("os").cpus().length
   , path = require('path');
 
 var app = express();
@@ -32,6 +34,14 @@ app.get('/', routes.index);
 app.get('/beacon', beacon.beacon);
 app.get('/users', user.list);
 
+
+if (cluster.isMaster) {
+  // Fork workers.
+  for (var i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+} else {
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+}
