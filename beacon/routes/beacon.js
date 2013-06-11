@@ -40,12 +40,10 @@ exports.beacon = function(req, res){
 		
 		var pageType = urlParts.query.pageType;
         var userStatus = urlParts.query.userStatus;
- 
-        // Parse "ip" parameter from request URL using GEO IP
-        var loc = geoip.lookup(urlParts.query.ip);
         
 		// Parse "ip" parameter from request headers using GEO IP
-        // var loc = geoip.lookup(req.headers['X-Forwarded-For']);
+		var ip = req.ip;
+        var loc = geoip.lookup(ip);
 		var country = loc.country;
         var region = loc.region;
  
