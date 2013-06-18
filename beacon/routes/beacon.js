@@ -4,7 +4,6 @@
 
 var StatsD = require('node-statsd').StatsD
 	, tldtools = require('tldtools').init()
-	, url = require('url')
 	, http = require('http')
 	, qs = require('querystring')
 	, ms = require('ms')
@@ -13,11 +12,9 @@ var StatsD = require('node-statsd').StatsD
 
 exports.beacon = function(req, res){
 
-	var urlParts = url.parse(req.url,true);
-
     // Parse "u" parameter from request URL using tldtools
-    var rUrl = urlParts.query.u;
-	var domain = tldtools.extract(rUrl);
+    var ref = req.query.u;
+	var domain = tldtools.extract(ref);
 	var root = domain.domain;
 
 	// get TLD (.com / .co.uk / .de ... etc)
@@ -34,8 +31,8 @@ exports.beacon = function(req, res){
 
 	// http or https?
 	var protocol = domain.url_tokens.protocol;
-	var pageType = urlParts.query.pageType;
-	var userStatus = urlParts.query.userStatus;
+	var pageType = req.query.pageType;
+	var userStatus = req.query.userStatus;
         
 	// Parse "ip" parameter from request headers using GEO IP
 	var ip = req.ip;
@@ -63,7 +60,7 @@ exports.beacon = function(req, res){
 
 	// Check to see if the "r" (referrer) parameter is empty, if so then mark as New Visit
 	// NOTE: assumes users are not tracked across domains - a user browsing between www.example.com and blog.example.com would be marked as a repeat visit, even if the www and blog site share no cachable files.
-	if (urlParts.query.r.length >= 1) {
+	if (req.query.r.length >= 1) {
 		var visitType = "repeat";
 	}
 	else {
@@ -71,9 +68,9 @@ exports.beacon = function(req, res){
 	}
 		
 	// Parse load time parameters and convert to milliseconds using ms
-	var responseTime = ms(urlParts.query.t_resp);
-	var pageReady = ms(urlParts.query.t_page);
-	var docComplete = ms(urlParts.query.t_done);
+	var responseTime = ms(req.query.t_resp);
+	var pageReady = ms(req.query.t_page);
+	var docComplete = ms(req.query.t_done);
  
  
 	// Send a 204 Response (no content)
