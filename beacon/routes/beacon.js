@@ -20,7 +20,7 @@ exports.beacon = function(req, res){
 	// get TLD (.com / .co.uk / .de ... etc)
 	var tld = domain.tld;
 	// replace periods in tld with underscores ready for graphite
-	var tld = tld.replace(/\./g, '_');
+	var cleanTld = tld.replace(/\./g, '_');
 	// check if subdomain (inc www), if no subdomain then assign to www
 	if(domain.subdomain.length < 1) {
 		var subdomain = "www";
@@ -40,12 +40,13 @@ exports.beacon = function(req, res){
 	var country = loc.country;
 	var region = loc.region;
 
-    // Get User Agent from Request headers, parse using useragent
-    var ua = useragent.lookup(req.headers['user-agent']);
+	// Get User Agent from Request headers, parse using useragent
+    var userAgent = req.headers['user-agent'];
+	var ua = useragent.lookup(userAgent);
 	var browser = ua.family;
-	var browser_version = ua.major;
+	var browserVersion = ua.major;
 	var os = ua.os.family;
-	//var device = ua.device.family;
+	var device = ua.device.family;
 
 	// move this to Boomerang to ease load on Node Beacon?
 	var uaString = ua.toString();
@@ -90,7 +91,8 @@ exports.beacon = function(req, res){
 	// ua
 	console.log("useragent:" + ua);
 	console.log("os:" + os);
-	console.log("device:" + deviceType);
+	console.log("device:" + device);
+	console.log("isMobile:" + deviceType);
 	//graphite
 	console.log("graphite pathname:" + root + "." + tld);
 
@@ -99,18 +101,18 @@ exports.beacon = function(req, res){
 
 	//c.timing(root+'.'+tld+'.'+subdomain+'.pages.'+pageType+'.TTFB', responseTime);
 	//c.timing(root+'.'+tld+'.'+subdomain+'.pages.'+pageType+'.Render', pageReady);
-	c.timing(root+'.'+tld+'.'+subdomain+'.pageTypes.'+pageType+'.docComplete', docComplete);
+	c.timing(root+'.'+cleanTld+'.'+subdomain+'.pageTypes.'+pageType+'.docComplete', docComplete);
 
-	c.timing(root+'.'+tld+'.'+subdomain+'.geographical.'+country+'.'+region+'.docComplete', docComplete);
+	c.timing(root+'.'+cleanTld+'.'+subdomain+'.geographical.'+country+'.'+region+'.docComplete', docComplete);
 
-	c.timing(root+'.'+tld+'.'+subdomain+'.browsers.'+browser+'.'+browser_version+'.docComplete', docComplete);
+	c.timing(root+'.'+cleanTld+'.'+subdomain+'.browsers.'+browser+'.'+browserVersion+'.docComplete', docComplete);
 
 	//tracking devices in graphite could be VERY expensive, let's try OS instead
 	//c.timing(root+'.'+tld+'.'+subdomain+'.devices.'+device+'.docComplete', docComplete);
-	c.timing(root+'.'+tld+'.'+subdomain+'.devices.'+deviceType+'.docComplete', docComplete);
+	c.timing(root+'.'+cleanTld+'.'+subdomain+'.devices.'+deviceType+'.docComplete', docComplete);
 
-	c.timing(root+'.'+tld+'.'+subdomain+'.visitors.'+visitType+'.docComplete', docComplete);
+	c.timing(root+'.'+cleanTld+'.'+subdomain+'.visitors.'+visitType+'.docComplete', docComplete);
 
-	c.timing(root+'.'+tld+'.'+subdomain+'.visitors.'+userStatus+'.docComplete', docComplete);
+	c.timing(root+'.'+cleanTld+'.'+subdomain+'.visitors.'+userStatus+'.docComplete', docComplete);
 
 };
