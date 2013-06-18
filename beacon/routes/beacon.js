@@ -48,7 +48,7 @@ exports.beacon = function(req, res){
 	var browser = ua.family;
 	var browser_version = ua.major;
 	var os = ua.os.family;
-	var device = ua.device.family;
+	//var device = ua.device.family;
 
 	// move this to Boomerang to ease load on Node Beacon?
 	var uaString = ua.toString();
@@ -93,7 +93,7 @@ exports.beacon = function(req, res){
 	// ua
 	console.log("useragent:" + ua);
 	console.log("os:" + os);
-	console.log("device:" + device);
+	console.log("device:" + deviceType);
 	//graphite
 	console.log("graphite pathname:" + root + "." + tld);
 
